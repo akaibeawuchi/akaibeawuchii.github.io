@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Table Tennis</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #1a2a1a;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    font-family: 'Lato', sans-serif;
+    overflow: hidden;
+  }
+
+  #overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(10,20,10,0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    backdrop-filter: blur(4px);
+  }
+
+  #menu {
+    background: linear-gradient(145deg, #2d4a2d, #1a3020);
+    border: 2px solid #4a7c4a;
+    border-radius: 16px;
+    padding: 48px 56px;
+    text-align: center;
+    box-shadow: 0 0 60px rgba(0,200,80,0.15), inset 0 1px 0 rgba(255,255,255,0.1);
+    min-width: 360px;
+  }
+
+  #menu h1 {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 3.2rem;
+    color: #c8e6c8;
+    letter-spacing: 4px;
+    text-shadow: 0 0 30px rgba(100,255,100,0.3);
+    margin-bottom: 8px;
+  }
+
+  #menu .subtitle {
+    color: #6a9e6a;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 36px;
+  }
+
+  .field-group {
+    margin-bottom: 24px;
+    text-align: left;
+  }
+
+  .field-group label {
+    display: block;
+    color: #8ab88a;
+    font-size: 0.78rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+  }
+
+  .btn-group {
+    display: flex;
+    gap: 8px;
+  }
+
+  .opt-btn {
+    flex: 1;
+    padding: 10px;
+    border: 2px solid #4a7c4a;
+    background: transparent;
+    color: #8ab88a;
+    border-radius: 8px;
+    cursor: pointer;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+    transition: all 0.2s;
+  }
+
+  .opt-btn:hover { border-color: #7ab87a; color: #b8d8b8; }
+  .opt-btn.active {
+    background: #3d6b3d;
+    border-color: #7ac87a;
+    color: #e8f8e8;
+    box-shadow: 0 0 12px rgba(100,200,100,0.3);
+  }
+
+  .points-input {
+    width: 100%;
+    padding: 10px 14px;
+    background: #1a3020;
+    border: 2px solid #4a7c4a;
+    border-radius: 8px;
+    color: #c8e8c8;
+    font-size: 1.1rem;
+    font-family: 'Bebas Neue', cursive;
+    letter-spacing: 2px;
+    outline: none;
+    text-align: center;
+    transition: border-color 0.2s;
+  }
+
+  .points-input:focus { border-color: #7ac87a; }
+
+  #startBtn {
+    margin-top: 16px;
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #3d7a3d, #2d5a2d);
+    border: 2px solid #6ab86a;
+    border-radius: 10px;
+    color: #e0f4e0;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.5rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    box-shadow: 0 4px 20px rgba(100,200,100,0.2);
+  }
+
+  #startBtn:hover {
+    background: linear-gradient(135deg, #4d8a4d, #3d6a3d);
+    box-shadow: 0 6px 30px rgba(100,200,100,0.35);
+    transform: translateY(-1px);
+  }
+
+  #gameWrapper {
+    position: relative;
+    display: none;
+  }
+
+  #scoreBoard {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 24px;
+    background: #1a3020;
+    border-radius: 10px 10px 0 0;
+    border: 2px solid #4a7c4a;
+    border-bottom: none;
+  }
+
+  .player-score {
+    text-align: center;
+  }
+
+  .player-name {
+    font-size: 0.7rem;
+    color: #6a9e6a;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+
+  .score-num {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 2.4rem;
+    color: #c8e8c8;
+    line-height: 1;
+  }
+
+  .vs-text {
+    font-family: 'Bebas Neue', cursive;
+    color: #4a7c4a;
+    font-size: 1.2rem;
+    letter-spacing: 3px;
+  }
+
+  canvas {
+    display: block;
+    border: 2px solid #4a7c4a;
+    border-top: none;
+    border-radius: 0 0 10px 10px;
+  }
+
+  #gameOverOverlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(10,20,10,0.9);
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0 0 10px 10px;
+    backdrop-filter: blur(6px);
+    gap: 20px;
+  }
+
+  #gameOverMsg {
+    font-family: 'Bebas Neue', cursive;
+    font-size: 3rem;
+    letter-spacing: 6px;
+    color: #c8e8c8;
+    text-shadow: 0 0 40px rgba(100,255,100,0.4);
+  }
+
+  .end-btn {
+    padding: 12px 36px;
+    border-radius: 8px;
+    font-family: 'Bebas Neue', cursive;
+    font-size: 1.3rem;
+    letter-spacing: 3px;
+    cursor: pointer;
+    border: 2px solid;
+    transition: all 0.2s;
+  }
+
+  #playAgainBtn {
+    background: #2d5a2d;
+    border-color: #6ab86a;
+    color: #e0f4e0;
+  }
+
+  #playAgainBtn:hover { background: #3d6a3d; transform: translateY(-1px); }
+
+  #exitBtn {
+    background: transparent;
+    border-color: #7a4a4a;
+    color: #d49090;
+  }
+
+  #exitBtn:hover { background: #3a2020; transform: translateY(-1px); }
+
+  #toMenuBtn {
+    background: transparent;
+    border-color: #4a6a7a;
+    color: #90b4c8;
+  }
+
+  #toMenuBtn:hover { background: #1a2a3a; transform: translateY(-1px); }
+</style>
+</head>
+<body>
+
+<div id="overlay">
+  <div id="menu">
+    <h1>Table Tennis</h1>
+    <p class="subtitle">1 vs Computer</p>
+
+    <div class="field-group">
+      <label>Difficulty</label>
+      <div class="btn-group">
+        <button class="opt-btn active" data-diff="easy">Easy</button>
+        <button class="opt-btn" data-diff="medium">Medium</button>
+        <button class="opt-btn" data-diff="hard">Hard</button>
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label>Points to Win</label>
+      <input class="points-input" type="number" id="pointsInput" value="7" min="1" max="21">
+    </div>
+
+    <button id="startBtn">Serve!</button>
+  </div>
+</div>
+
+<div id="gameWrapper">
+  <div id="scoreBoard">
+    <div class="player-score">
+      <div class="player-name">You</div>
+      <div class="score-num" id="playerScore">0</div>
+    </div>
+    <div class="vs-text">VS</div>
+    <div class="player-score">
+      <div class="player-name">Computer</div>
+      <div class="score-num" id="compScore">0</div>
+    </div>
+  </div>
+  <canvas id="canvas"></canvas>
+  <div id="gameOverOverlay">
+    <div id="gameOverMsg">YOU WIN!</div>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
+      <button class="end-btn" id="playAgainBtn">Play Again</button>
+      <button class="end-btn" id="toMenuBtn">Menu</button>
+      <button class="end-btn" id="exitBtn">Exit</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const overlay = document.getElementById('overlay');
+const gameWrapper = document.getElementById('gameWrapper');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const gameOverOverlay = document.getElementById('gameOverOverlay');
+const gameOverMsg = document.getElementById('gameOverMsg');
+const playerScoreEl = document.getElementById('playerScore');
+const compScoreEl = document.getElementById('compScore');
+
+const W = 700, H = 480;
+canvas.width = W;
+canvas.height = H;
+
+// Difficulty settings
+const DIFFICULTY = {
+  easy:   { ballSpeed: 3.5, cpuSpeed: 2.8, paddleH: 110, ballR: 10 },
+  medium: { ballSpeed: 5.5, cpuSpeed: 4.2, paddleH: 85,  ballR: 9  },
+  hard:   { ballSpeed: 8,   cpuSpeed: 6.5, paddleH: 65,  ballR: 8  },
+};
+
+let diff = 'easy';
+let pointsToWin = 7;
+let playerScore = 0, compScore = 0;
+let animId;
+
+// Paddle dimensions
+const PADDLE_W = 14;
+let paddleH, ballR, ballSpeed, cpuSpeed;
+
+let playerY, compY, ballX, ballY, ballVX, ballVY;
+const MARGIN = 16;
+const keys = {};
+
+document.addEventListener('keydown', e => { keys[e.key] = true; e.preventDefault(); });
+document.addEventListener('keyup',   e => { keys[e.key] = false; });
+
+// Difficulty buttons
+document.querySelectorAll('[data-diff]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-diff]').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    diff = btn.dataset.diff;
+  });
+});
+
+document.getElementById('startBtn').addEventListener('click', startGame);
+document.getElementById('playAgainBtn').addEventListener('click', () => { gameOverOverlay.style.display = 'none'; resetBall(); loop(); });
+document.getElementById('toMenuBtn').addEventListener('click', () => { cancelAnimationFrame(animId); gameOverOverlay.style.display = 'none'; gameWrapper.style.display = 'none'; overlay.style.display = 'flex'; });
+document.getElementById('exitBtn').addEventListener('click', () => { window.close(); /* fallback */ document.body.innerHTML = '<div style="color:#c8e8c8;font-family:Bebas Neue,cursive;font-size:2rem;display:flex;height:100vh;align-items:center;justify-content:center;background:#1a2a1a;letter-spacing:4px;">Thanks for playing!</div>'; });
+
+function startGame() {
+  overlay.style.display = 'none';
+  gameWrapper.style.display = 'block';
+
+  const s = DIFFICULTY[diff];
+  paddleH = s.paddleH;
+  ballR    = s.ballR;
+  ballSpeed = s.ballSpeed;
+  cpuSpeed  = s.cpuSpeed;
+  pointsToWin = parseInt(document.getElementById('pointsInput').value) || 7;
+
+  playerScore = compScore = 0;
+  playerScoreEl.textContent = 0;
+  compScoreEl.textContent   = 0;
+
+  playerY = (H - paddleH) / 2;
+  compY   = (H - paddleH) / 2;
+
+  resetBall();
+  cancelAnimationFrame(animId);
+  loop();
+}
+
+function resetBall() {
+  ballX = W / 2;
+  ballY = H / 2;
+  const angle = (Math.random() * 0.6 - 0.3);
+  const dir = Math.random() < 0.5 ? 1 : -1;
+  ballVX = ballSpeed * dir * Math.cos(angle);
+  ballVY = ballSpeed * Math.sin(angle);
+}
+
+function loop() {
+  update();
+  draw();
+  animId = requestAnimationFrame(loop);
+}
+
+function update() {
+  // Player movement
+  if (keys['ArrowUp'])   playerY = Math.max(0, playerY - 6);
+  if (keys['ArrowDown']) playerY = Math.min(H - paddleH, playerY + 6);
+
+  // CPU AI
+  const cpuCenter = compY + paddleH / 2;
+  if (cpuCenter < ballY - 4) compY = Math.min(H - paddleH, compY + cpuSpeed);
+  if (cpuCenter > ballY + 4) compY = Math.max(0, compY - cpuSpeed);
+
+  // Ball movement
+  ballX += ballVX;
+  ballY += ballVY;
+
+  // Top/bottom bounce
+  if (ballY - ballR < 0) { ballY = ballR; ballVY *= -1; }
+  if (ballY + ballR > H) { ballY = H - ballR; ballVY *= -1; }
+
+  // Player paddle collision (left)
+  const px = MARGIN + PADDLE_W;
+  if (ballX - ballR < px && ballX - ballR > MARGIN && ballY > playerY && ballY < playerY + paddleH) {
+    ballX = px + ballR;
+    const rel = (ballY - (playerY + paddleH / 2)) / (paddleH / 2);
+    const bounceAngle = rel * 0.8;
+    const speed = Math.sqrt(ballVX*ballVX + ballVY*ballVY) * 1.05;
+    ballVX =  Math.abs(speed * Math.cos(bounceAngle));
+    ballVY = speed * Math.sin(bounceAngle);
+    if (ballVX > ballSpeed * 2.5) ballVX = ballSpeed * 2.5;
+  }
+
+  // CPU paddle collision (right)
+  const cx = W - MARGIN - PADDLE_W;
+  if (ballX + ballR > cx && ballX + ballR < W - MARGIN && ballY > compY && ballY < compY + paddleH) {
+    ballX = cx - ballR;
+    const rel = (ballY - (compY + paddleH / 2)) / (paddleH / 2);
+    const bounceAngle = rel * 0.8;
+    const speed = Math.sqrt(ballVX*ballVX + ballVY*ballVY) * 1.05;
+    ballVX = -Math.abs(speed * Math.cos(bounceAngle));
+    ballVY = speed * Math.sin(bounceAngle);
+    if (Math.abs(ballVX) > ballSpeed * 2.5) ballVX = -ballSpeed * 2.5;
+  }
+
+  // Score
+  if (ballX - ballR < 0) {
+    compScore++;
+    compScoreEl.textContent = compScore;
+    if (compScore >= pointsToWin) { endGame(false); return; }
+    resetBall();
+  }
+  if (ballX + ballR > W) {
+    playerScore++;
+    playerScoreEl.textContent = playerScore;
+    if (playerScore >= pointsToWin) { endGame(true); return; }
+    resetBall();
+  }
+}
+
+function draw() {
+  // Green table
+  ctx.fillStyle = '#2d6a2d';
+  ctx.fillRect(0, 0, W, H);
+
+  // Table lines
+  ctx.strokeStyle = 'rgba(255,255,255,0.18)';
+  ctx.lineWidth = 2;
+  // Center line
+  ctx.setLineDash([10, 10]);
+  ctx.beginPath();
+  ctx.moveTo(W / 2, 0);
+  ctx.lineTo(W / 2, H);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Border
+  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(4, 4, W - 8, H - 8);
+
+  // Net
+  ctx.fillStyle = 'rgba(255,255,255,0.35)';
+  ctx.fillRect(W/2 - 2, 0, 4, H);
+
+  // Paddles (beige)
+  const grad1 = ctx.createLinearGradient(MARGIN, 0, MARGIN + PADDLE_W, 0);
+  grad1.addColorStop(0, '#d4b896');
+  grad1.addColorStop(1, '#c4a070');
+  ctx.fillStyle = grad1;
+  ctx.beginPath();
+  ctx.roundRect(MARGIN, playerY, PADDLE_W, paddleH, 4);
+  ctx.fill();
+
+  const grad2 = ctx.createLinearGradient(W - MARGIN - PADDLE_W, 0, W - MARGIN, 0);
+  grad2.addColorStop(0, '#c4a070');
+  grad2.addColorStop(1, '#d4b896');
+  ctx.fillStyle = grad2;
+  ctx.beginPath();
+  ctx.roundRect(W - MARGIN - PADDLE_W, compY, PADDLE_W, paddleH, 4);
+  ctx.fill();
+
+  // Ball (white with shadow)
+  ctx.shadowColor = 'rgba(0,0,0,0.5)';
+  ctx.shadowBlur = 10;
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.arc(ballX, ballY, ballR, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Subtle highlight on ball
+  const bgrad = ctx.createRadialGradient(ballX - ballR*0.3, ballY - ballR*0.3, ballR*0.1, ballX, ballY, ballR);
+  bgrad.addColorStop(0, 'rgba(255,255,255,0.9)');
+  bgrad.addColorStop(1, 'rgba(200,200,200,0.6)');
+  ctx.fillStyle = bgrad;
+  ctx.beginPath();
+  ctx.arc(ballX, ballY, ballR, 0, Math.PI * 2);
+  ctx.fill();
+}
+
+function endGame(playerWon) {
+  cancelAnimationFrame(animId);
+  gameOverMsg.textContent = playerWon ? 'YOU WIN! 🏆' : 'GAME OVER';
+  gameOverMsg.style.color = playerWon ? '#a0f0a0' : '#f0a0a0';
+  gameOverOverlay.style.display = 'flex';
+}
+</script>
+</body>
+</html>
