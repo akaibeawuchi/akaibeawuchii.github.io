@@ -3,506 +3,755 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Table Tennis</title>
+<title>WPU Biology — Student Handbook Assistant</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Lato:wght@300;400;700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; }
+  :root {
+    --bg: #f5f3ee;
+    --surface: #ffffff;
+    --surface2: #ede9e0;
+    --border: #d8d2c5;
+    --text: #1a1814;
+    --muted: #7a7468;
+    --accent: #2d5a27;
+    --accent-light: #4a8f42;
+    --accent-bg: #e8f0e7;
+    --gold: #b8860b;
+    --user-bg: #2d5a27;
+    --user-text: #ffffff;
+    --bot-bg: #ffffff;
+    --shadow: 0 2px 16px rgba(0,0,0,0.08);
+  }
 
   body {
-    background: #1a2a1a;
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    height: 100dvh;
     display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
-    font-family: 'Lato', sans-serif;
+    flex-direction: column;
     overflow: hidden;
   }
 
-  #overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(10,20,10,0.92);
+  /* HEADER */
+  header {
+    background: var(--accent);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    height: 64px;
+    flex-shrink: 0;
+    box-shadow: 0 2px 12px rgba(45,90,39,0.3);
+  }
+
+  .header-icon {
+    width: 38px;
+    height: 38px;
+    background: rgba(255,255,255,0.15);
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 100;
-    backdrop-filter: blur(4px);
+    font-size: 20px;
+    flex-shrink: 0;
   }
 
-  #menu {
-    background: linear-gradient(145deg, #2d4a2d, #1a3020);
-    border: 2px solid #4a7c4a;
-    border-radius: 16px;
-    padding: 48px 56px;
-    text-align: center;
-    box-shadow: 0 0 60px rgba(0,200,80,0.15), inset 0 1px 0 rgba(255,255,255,0.1);
-    min-width: 360px;
+  .header-text h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: 17px;
+    font-weight: 700;
+    color: #fff;
+    line-height: 1.2;
+    letter-spacing: -0.01em;
   }
 
-  #menu h1 {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 3.2rem;
-    color: #c8e6c8;
-    letter-spacing: 4px;
-    text-shadow: 0 0 30px rgba(100,255,100,0.3);
-    margin-bottom: 8px;
+  .header-text p {
+    font-size: 12px;
+    color: rgba(255,255,255,0.65);
+    font-weight: 300;
   }
 
-  #menu .subtitle {
-    color: #6a9e6a;
-    font-size: 0.85rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    margin-bottom: 36px;
-  }
-
-  .field-group {
-    margin-bottom: 24px;
-    text-align: left;
-  }
-
-  .field-group label {
-    display: block;
-    color: #8ab88a;
-    font-size: 0.78rem;
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    margin-bottom: 10px;
-  }
-
-  .btn-group {
+  .status-dot {
+    margin-left: auto;
     display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: rgba(255,255,255,0.7);
+  }
+
+  .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #7dde74;
+    box-shadow: 0 0 6px #7dde74;
+    animation: pulse 2s infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  /* CHAT AREA */
+  .chat-wrapper {
+    flex: 1;
+    overflow-y: auto;
+    padding: 24px 16px;
+    scroll-behavior: smooth;
+  }
+
+  .chat-wrapper::-webkit-scrollbar { width: 5px; }
+  .chat-wrapper::-webkit-scrollbar-thumb { background: var(--border); border-radius: 8px; }
+
+  .messages {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+  }
+
+  /* WELCOME CARD */
+  .welcome-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px 24px;
+    box-shadow: var(--shadow);
+    animation: fadeUp 0.5s ease;
+  }
+
+  .welcome-card .wpu-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--accent-bg);
+    border: 1px solid rgba(45,90,39,0.2);
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    padding: 4px 10px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+
+  .welcome-card h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 800;
+    line-height: 1.3;
+    margin-bottom: 10px;
+    color: var(--text);
+  }
+
+  .welcome-card p {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 20px;
+  }
+
+  .suggestion-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
     gap: 8px;
   }
 
-  .opt-btn {
-    flex: 1;
-    padding: 10px;
-    border: 2px solid #4a7c4a;
-    background: transparent;
-    color: #8ab88a;
-    border-radius: 8px;
-    cursor: pointer;
-    font-family: 'Bebas Neue', cursive;
-    font-size: 1.1rem;
-    letter-spacing: 1px;
-    transition: all 0.2s;
-  }
-
-  .opt-btn:hover { border-color: #7ab87a; color: #b8d8b8; }
-  .opt-btn.active {
-    background: #3d6b3d;
-    border-color: #7ac87a;
-    color: #e8f8e8;
-    box-shadow: 0 0 12px rgba(100,200,100,0.3);
-  }
-
-  .points-input {
-    width: 100%;
-    padding: 10px 14px;
-    background: #1a3020;
-    border: 2px solid #4a7c4a;
-    border-radius: 8px;
-    color: #c8e8c8;
-    font-size: 1.1rem;
-    font-family: 'Bebas Neue', cursive;
-    letter-spacing: 2px;
-    outline: none;
-    text-align: center;
-    transition: border-color 0.2s;
-  }
-
-  .points-input:focus { border-color: #7ac87a; }
-
-  #startBtn {
-    margin-top: 16px;
-    width: 100%;
-    padding: 14px;
-    background: linear-gradient(135deg, #3d7a3d, #2d5a2d);
-    border: 2px solid #6ab86a;
+  .suggestion-btn {
+    background: var(--surface2);
+    border: 1px solid var(--border);
     border-radius: 10px;
-    color: #e0f4e0;
-    font-family: 'Bebas Neue', cursive;
-    font-size: 1.5rem;
-    letter-spacing: 3px;
+    padding: 10px 12px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    color: var(--text);
     cursor: pointer;
-    transition: all 0.2s;
-    box-shadow: 0 4px 20px rgba(100,200,100,0.2);
+    text-align: left;
+    transition: all 0.18s ease;
+    line-height: 1.4;
   }
 
-  #startBtn:hover {
-    background: linear-gradient(135deg, #4d8a4d, #3d6a3d);
-    box-shadow: 0 6px 30px rgba(100,200,100,0.35);
+  .suggestion-btn:hover {
+    background: var(--accent-bg);
+    border-color: var(--accent-light);
+    color: var(--accent);
     transform: translateY(-1px);
   }
 
-  #gameWrapper {
-    position: relative;
-    display: none;
-  }
-
-  #scoreBoard {
+  /* MESSAGE BUBBLES */
+  .msg {
     display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 12px 24px;
-    background: #1a3020;
-    border-radius: 10px 10px 0 0;
-    border: 2px solid #4a7c4a;
-    border-bottom: none;
+    gap: 10px;
+    animation: fadeUp 0.3s ease;
   }
 
-  .player-score {
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .msg.user { flex-direction: row-reverse; }
+
+  .avatar {
+    width: 34px;
+    height: 34px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .msg.user .avatar {
+    background: var(--user-bg);
+    color: white;
+    font-size: 13px;
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+  }
+
+  .msg.bot .avatar {
+    background: var(--accent-bg);
+    border: 1px solid rgba(45,90,39,0.2);
+    font-size: 18px;
+  }
+
+  .bubble {
+    max-width: calc(100% - 90px);
+    padding: 12px 16px;
+    border-radius: 14px;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+
+  .msg.user .bubble {
+    background: var(--user-bg);
+    color: var(--user-text);
+    border-bottom-right-radius: 4px;
+  }
+
+  .msg.bot .bubble {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-bottom-left-radius: 4px;
+    box-shadow: var(--shadow);
+  }
+
+  .bubble strong { font-weight: 600; }
+
+  /* TYPING INDICATOR */
+  .typing-indicator {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    padding: 14px 16px;
+  }
+
+  .typing-indicator span {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--muted);
+    animation: bounce 1.2s infinite;
+  }
+
+  .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+
+  @keyframes bounce {
+    0%, 60%, 100% { transform: translateY(0); opacity: 0.5; }
+    30% { transform: translateY(-5px); opacity: 1; }
+  }
+
+  /* INPUT */
+  .input-area {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 14px 16px 18px;
+    flex-shrink: 0;
+  }
+
+  .input-row {
+    max-width: 720px;
+    margin: 0 auto;
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 14px;
+    padding: 8px 8px 8px 14px;
+    transition: border-color 0.2s;
+  }
+
+  .input-row:focus-within {
+    border-color: var(--accent-light);
+  }
+
+  textarea {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--text);
+    resize: none;
+    min-height: 22px;
+    max-height: 120px;
+    line-height: 1.5;
+    padding: 2px 0;
+  }
+
+  textarea::placeholder { color: var(--muted); }
+
+  .send-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 10px;
+    border: none;
+    background: var(--accent);
+    color: white;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.18s ease;
+  }
+
+  .send-btn:hover:not(:disabled) {
+    background: var(--accent-light);
+    transform: scale(1.05);
+  }
+
+  .send-btn:disabled {
+    background: var(--border);
+    color: var(--muted);
+    cursor: not-allowed;
+  }
+
+  .send-btn svg { width: 17px; height: 17px; }
+
+  .input-hint {
+    max-width: 720px;
+    margin: 8px auto 0;
+    font-size: 11px;
+    color: var(--muted);
     text-align: center;
   }
 
-  .player-name {
-    font-size: 0.7rem;
-    color: #6a9e6a;
-    letter-spacing: 2px;
-    text-transform: uppercase;
+  /* ERROR */
+  .error-bubble {
+    background: #fff5f5;
+    border: 1px solid #ffcdd2;
+    color: #c62828;
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: 13px;
   }
 
-  .score-num {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 2.4rem;
-    color: #c8e8c8;
-    line-height: 1;
+  @media (max-width: 500px) {
+    .suggestion-grid { grid-template-columns: 1fr; }
+    .bubble { max-width: calc(100% - 50px); }
   }
-
-  .vs-text {
-    font-family: 'Bebas Neue', cursive;
-    color: #4a7c4a;
-    font-size: 1.2rem;
-    letter-spacing: 3px;
-  }
-
-  canvas {
-    display: block;
-    border: 2px solid #4a7c4a;
-    border-top: none;
-    border-radius: 0 0 10px 10px;
-  }
-
-  #gameOverOverlay {
-    position: absolute;
-    inset: 0;
-    background: rgba(10,20,10,0.9);
-    display: none;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border-radius: 0 0 10px 10px;
-    backdrop-filter: blur(6px);
-    gap: 20px;
-  }
-
-  #gameOverMsg {
-    font-family: 'Bebas Neue', cursive;
-    font-size: 3rem;
-    letter-spacing: 6px;
-    color: #c8e8c8;
-    text-shadow: 0 0 40px rgba(100,255,100,0.4);
-  }
-
-  .end-btn {
-    padding: 12px 36px;
-    border-radius: 8px;
-    font-family: 'Bebas Neue', cursive;
-    font-size: 1.3rem;
-    letter-spacing: 3px;
-    cursor: pointer;
-    border: 2px solid;
-    transition: all 0.2s;
-  }
-
-  #playAgainBtn {
-    background: #2d5a2d;
-    border-color: #6ab86a;
-    color: #e0f4e0;
-  }
-
-  #playAgainBtn:hover { background: #3d6a3d; transform: translateY(-1px); }
-
-  #exitBtn {
-    background: transparent;
-    border-color: #7a4a4a;
-    color: #d49090;
-  }
-
-  #exitBtn:hover { background: #3a2020; transform: translateY(-1px); }
-
-  #toMenuBtn {
-    background: transparent;
-    border-color: #4a6a7a;
-    color: #90b4c8;
-  }
-
-  #toMenuBtn:hover { background: #1a2a3a; transform: translateY(-1px); }
 </style>
 </head>
 <body>
 
-<div id="overlay">
-  <div id="menu">
-    <h1>Table Tennis</h1>
-    <p class="subtitle">1 vs Computer</p>
+<header>
+  <div class="header-icon">🌿</div>
+  <div class="header-text">
+    <h1>WPU Biology Handbook Assistant</h1>
+    <p>William Paterson University · Department of Biology</p>
+  </div>
+  <div class="status-dot">
+    <div class="dot"></div>
+    Online
+  </div>
+</header>
 
-    <div class="field-group">
-      <label>Difficulty</label>
-      <div class="btn-group">
-        <button class="opt-btn active" data-diff="easy">Easy</button>
-        <button class="opt-btn" data-diff="medium">Medium</button>
-        <button class="opt-btn" data-diff="hard">Hard</button>
+<div class="chat-wrapper" id="chatWrapper">
+  <div class="messages" id="messages">
+
+    <div class="welcome-card">
+      <div class="wpu-badge">📘 Student Handbook</div>
+      <h2>Hello! I'm your Biology Dept. Guide 👋</h2>
+      <p>Ask me anything from the WPU Department of Biology Student Handbook — courses, requirements, faculty, policies, scholarships, career paths, and more.</p>
+      <div class="suggestion-grid">
+        <button class="suggestion-btn" onclick="ask(this)">📋 What are the core courses for a BS in Biology?</button>
+        <button class="suggestion-btn" onclick="ask(this)">🎓 What GPA do I need to graduate?</button>
+        <button class="suggestion-btn" onclick="ask(this)">🔬 What research opportunities are available?</button>
+        <button class="suggestion-btn" onclick="ask(this)">📞 How do I contact the department?</button>
       </div>
     </div>
 
-    <div class="field-group">
-      <label>Points to Win</label>
-      <input class="points-input" type="number" id="pointsInput" value="7" min="1" max="21">
-    </div>
-
-    <button id="startBtn">Serve!</button>
   </div>
 </div>
 
-<div id="gameWrapper">
-  <div id="scoreBoard">
-    <div class="player-score">
-      <div class="player-name">You</div>
-      <div class="score-num" id="playerScore">0</div>
-    </div>
-    <div class="vs-text">VS</div>
-    <div class="player-score">
-      <div class="player-name">Computer</div>
-      <div class="score-num" id="compScore">0</div>
-    </div>
+<div class="input-area">
+  <div class="input-row">
+    <textarea id="userInput" placeholder="Ask about courses, policies, faculty, careers…" rows="1" onkeydown="handleKey(event)" oninput="autoResize(this)"></textarea>
+    <button class="send-btn" id="sendBtn" onclick="sendMessage()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
   </div>
-  <canvas id="canvas"></canvas>
-  <div id="gameOverOverlay">
-    <div id="gameOverMsg">YOU WIN!</div>
-    <div style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;">
-      <button class="end-btn" id="playAgainBtn">Play Again</button>
-      <button class="end-btn" id="toMenuBtn">Menu</button>
-      <button class="end-btn" id="exitBtn">Exit</button>
-    </div>
-  </div>
+  <p class="input-hint">Based on the WPU Biology Department Student Handbook (2013)</p>
 </div>
 
 <script>
-const overlay = document.getElementById('overlay');
-const gameWrapper = document.getElementById('gameWrapper');
-const canvas = document.getElementById('canvas');
-const ctx = canvas.getContext('2d');
-const gameOverOverlay = document.getElementById('gameOverOverlay');
-const gameOverMsg = document.getElementById('gameOverMsg');
-const playerScoreEl = document.getElementById('playerScore');
-const compScoreEl = document.getElementById('compScore');
+const HANDBOOK_CONTEXT = `
+You are a helpful academic assistant for the William Paterson University (WPU) Department of Biology. Answer student questions ONLY based on the following student handbook content. Be friendly, clear, and concise. If a question is not covered in the handbook, say so politely and suggest they contact the department directly.
 
-const W = 700, H = 480;
-canvas.width = W;
-canvas.height = H;
+=== WPU DEPARTMENT OF BIOLOGY STUDENT HANDBOOK ===
 
-// Difficulty settings
-const DIFFICULTY = {
-  easy:   { ballSpeed: 3.5, cpuSpeed: 2.8, paddleH: 110, ballR: 10 },
-  medium: { ballSpeed: 5.5, cpuSpeed: 4.2, paddleH: 85,  ballR: 9  },
-  hard:   { ballSpeed: 8,   cpuSpeed: 6.5, paddleH: 65,  ballR: 8  },
-};
+CONTACT INFORMATION:
+- Department Chairperson: Dr. Lance Risley | Office: SciE4064 | Phone: x3438 | Email: risleyl@wpunj.edu
+- Assistant Chairperson: Dr. Stephen Vail | Office: SciE4041 | Phone: x2487 | Email: vails@wpunj.edu
+- Secretary: Nancy Malba | SciE 4064 | x2265 | malban@wpunj.edu
+- Secretary: Georgeann Russo | SciE 4064 | x2245 | russog@wpunj.edu
 
-let diff = 'easy';
-let pointsToWin = 7;
-let playerScore = 0, compScore = 0;
-let animId;
+IMPORTANT CAMPUS PHONE NUMBERS:
+- Advisement Center: x2727
+- Registrar: x2700
+- Bursar: x3695
+- Academic Support Center: x3324
+- Science Enrichment Center: x3340 (SciE)
+- Financial Aid: x2202
+- Student Information Center: x2292
+- WPU Campus Police: x2300
 
-// Paddle dimensions
-const PADDLE_W = 14;
-let paddleH, ballR, ballSpeed, cpuSpeed;
+FACULTY:
+- Dr. Robert Benno | Courses: Animal Physiology, Histology, Neuroscience | Research: Developmental neurobiology | Office: SciE4047 x3440
+- Dr. Robert Chesney | Courses: General Biology I, Microbiology | Research: Bacterial and phage genetics | Advisor: Beta Beta Beta Honor Society | Office: SciE4051 x3455
+- Dr. Danielle Desroches | Courses: Anatomy & Physiology, Endocrinology | Research: Neuroendocrinology | Coordinator: GS-LSAMP and MAPS | Office: SciE4056 x2329
+- Dr. Eileen Gardner | Courses: General Biology I, Cell Biology, Developmental Biology, Immunology | Office: SciE4057 x3441
+- Dr. David Gilley | Courses: Ecology Evolution and Behavior, Animal Behavior | Research: Insect social organization; honey bee pheromones | Office: SciE4038 x2549
+- Dr. Jeung Woon Lee | Courses: Anatomy & Physiology, Neuroscience | Research: Neurophysiology of pain, stem cell transplantation | Office: SciE4044 x2442
+- Dr. Claire Leonard | Courses: Cell Biology, Histology, Biotechnology: Cell Culture | Research: Molecular biology of metabolic diseases | Coordinator: Pre-Professional | Office: SciE4058 x2791
+- Dr. Kendall Martin | Courses: Microbial Ecology, Basic Microbiology | Research: Microbial ecology; fungal-plant associations | Office: SciE4045 x3452
+- Dr. Jaishri Menon | Courses: Comparative Vertebrate Anatomy, Histology, TEM | Coordinator: Annual Undergraduate Research Symposium | Office: SciE4040 x2795
+- Dr. Emily Monroe | Courses: General Biology I, Biotechnology: Gene Expression, General Genetics | Research: Genomics, marine microorganisms | Office: SciE4053 x2792
+- Dr. Emmanuel Onaivi | Courses: Neuroscience, Pharmacology | Research: Molecular biology of drug abuse | Office: SciE4049 x3453
+- Dr. Pradeep Patnaik | Courses: General Biology I, Genetics, Molecular Biology | Research: DNA replication; parasitic protozoa | Graduate Coordinator | Office: SciE4053 x3454
+- Dr. Michael Peek | Courses: Ecology, Evolution & Behavior, Plant Physiology, Plant Ecology | Research: Plant ecophysiology | Office: SciE4054 x2247
+- Dr. Lance Risley (Chairperson) | Courses: General Biology II, Ecology, Invertebrate Zoology, Conservation Biology | Research: Ecology of bats; conservation of forest ecosystems | Office: SciE4064 x3438
+- Dr. David Slaymaker | Courses: General Biology I, General Botany, General Genetics | Research: Genetic diversity in beachgrass populations | Office: SciE4048 x2439
+- Dr. Joseph Spagna | Courses: General Biology II, Field Entomology, Evolution | Research: Evolutionary biomechanics of spiders and ants | Office: SciE4039 x2793
+- Dr. Stephen Vail (Assistant Chairperson) | Courses: Ecology Evolution & Behavior, General Ecology, Evolution, Mathematical Biology | Research: Population biology; tick-borne diseases | Office: SciE4041 x2487
+- Dr. Carey Waldburger (Post-Baccalaureate Advisor) | Courses: General Biology I, Biotechnology: DNA, Basic Microbiology | Research: Bacterial signal transduction | Office: SciE4052 x2486
+- Dr. Miryam Wahrman | Courses: General Biology I, Bioethics, Molecular Biology | Research: Molecular biology of development; biotechnology | Office: SciE4050 x3456
+- Dr. Jamie Weiss | Courses: Anatomy and Physiology, General Biology II, Cell Physiology | Research: Neurological diseases and neurophysiology | Office: SciE4042 x3457
 
-let playerY, compY, ballX, ballY, ballVX, ballVY;
-const MARGIN = 16;
-const keys = {};
+DEPARTMENT MISSION:
+The Department of Biology offers programs leading to Bachelor and Master of Science degrees in biology and biotechnology, preparing students for careers in teaching, scientific research, medicine, allied-health professions, biomedical/pharmaceutical industry, and government.
 
-document.addEventListener('keydown', e => { keys[e.key] = true; e.preventDefault(); });
-document.addEventListener('keyup',   e => { keys[e.key] = false; });
+PROGRAMS OFFERED:
+1. B.S. in Biology (concentrations: General, Physiology & Behavior, Ecology)
+2. B.S. in Biotechnology
+3. Minor in Biology
+4. M.S. degrees in Biology and Biotechnology
+5. Pre-Professional Programs (pre-medicine, pre-dentistry, Pre-PA, Pre-PT)
+6. NJ N-12 Teaching Certificate
 
-// Difficulty buttons
-document.querySelectorAll('[data-diff]').forEach(btn => {
-  btn.addEventListener('click', () => {
-    document.querySelectorAll('[data-diff]').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    diff = btn.dataset.diff;
-  });
-});
+DEGREE REQUIREMENTS:
+All undergraduate curricula consist of:
+1. University Core Curriculum (UCC): ~40 credits across 6 areas
+2. The Major: 33-35 credits in Biology plus 31-32 credits in co-requisites (Chemistry 16 cr, Physics 8 cr, Mathematics 8 cr)
 
-document.getElementById('startBtn').addEventListener('click', startGame);
-document.getElementById('playAgainBtn').addEventListener('click', () => { gameOverOverlay.style.display = 'none'; resetBall(); loop(); });
-document.getElementById('toMenuBtn').addEventListener('click', () => { cancelAnimationFrame(animId); gameOverOverlay.style.display = 'none'; gameWrapper.style.display = 'none'; overlay.style.display = 'flex'; });
-document.getElementById('exitBtn').addEventListener('click', () => { window.close(); /* fallback */ document.body.innerHTML = '<div style="color:#c8e8c8;font-family:Bebas Neue,cursive;font-size:2rem;display:flex;height:100vh;align-items:center;justify-content:center;background:#1a2a1a;letter-spacing:4px;">Thanks for playing!</div>'; });
+BIOLOGY CORE COURSES (must earn C- or better in all before taking upper-level courses):
+- BIO 1630 General Biology I
+- BIO 1640 General Biology II
+- BIO 2050 Cell Biology
+- BIO 2060 Genetics
+- BIO 2490 Ecology, Evolution & Behavior
 
-function startGame() {
-  overlay.style.display = 'none';
-  gameWrapper.style.display = 'block';
+CO-REQUISITES FOR ALL CONCENTRATIONS:
+- CHEM 1600/1610 General Chemistry I & II
+- CHEM 2510 & 2520 Organic Chemistry I & II
+- PHYS 2550/2560 or PHYS 2600/2610 College or General Physics I & II
+- MATH 1600 Calculus I
+- MATH 1610 Calculus II OR MATH 2300 Statistics OR MATH 3720 Math Models in Biological Science
 
-  const s = DIFFICULTY[diff];
-  paddleH = s.paddleH;
-  ballR    = s.ballR;
-  ballSpeed = s.ballSpeed;
-  cpuSpeed  = s.cpuSpeed;
-  pointsToWin = parseInt(document.getElementById('pointsInput').value) || 7;
+BIOLOGY CONCENTRATIONS:
+General Concentration:
+- Select one Plant course: BIO 3610, 3630, or 3650
+- 3 Biology electives at 3000+ level (at least one 4-credit)
+- BIO 4800 Biology Seminar or BIO 4990 Independent Study
 
-  playerScore = compScore = 0;
-  playerScoreEl.textContent = 0;
-  compScoreEl.textContent   = 0;
+Physiology & Behavior Concentration:
+- BIO 3500 Animal Behavior
+- BIO 3080 Animal Physiology
+- 2 Biology electives at 3000+ level (at least one 4-credit)
+- BIO 4800 or BIO 4990
 
-  playerY = (H - paddleH) / 2;
-  compY   = (H - paddleH) / 2;
+Ecology Concentration:
+- BIO 3630 Terrestrial Plant Ecology
+- BIO 3400 General Ecology
+- 1 Ecology elective at 3000+ level
+- 1 Biology elective at 3000+ level
+- BIO 4800 or BIO 4990
 
-  resetBall();
-  cancelAnimationFrame(animId);
-  loop();
+BIOLOGY ELECTIVES (sample):
+BIO 3080 Animal Physiology (4cr), BIO 3180 Invertebrate Zoology (4cr), BIO 3200 Microbiology (4cr), BIO 3330 Field Entomology (4cr), BIO 3350 Field Botany (3cr), BIO 3400 General Ecology (4cr), BIO 3450 Conservation Biology (3cr), BIO 3500 Animal Behavior (3cr), BIO 3610 General Botany (4cr), BIO 3630 Terrestrial Plant Ecology (4cr), BIO 3650 Plant Physiology (4cr), BIO 4020 Aquatic Ecology (4cr), BIO 4110 Human Reproduction (4cr), BIO 4170 Histology (4cr), BIO 4210 Developmental Biology (4cr), BIO 4440 Evolution (3cr), BIO 4600 Pharmacology (3cr), BIO 4700 Bioethics (3cr), BIO 4840 Scanning Electron Microscopy (4cr), BIO 4850 Transmission Electron Microscopy (4cr), CHEM 4270 Biochemistry I (4cr)
+
+ACADEMIC POLICIES:
+
+GPA Requirements:
+- Minimum 2.0 overall GPA in all major courses required to graduate
+- Grade scale: A=4.0, A-=3.7, B+=3.3, B=3.0, B-=2.7, C+=2.3, C=2.0, C-=1.7, D+=1.3, D=1.0, F=0
+- Pass/Fail grades not included in GPA
+- For repeat courses, only the last grade counts; must retake at WPUNJ
+
+Core Course C- Rule:
+- Must earn C- or better in all core Biology courses to proceed to sequential courses
+- If below C-, student is automatically dropped from sequential courses
+- Cannot graduate until C- or better is achieved in core courses
+
+Biology Prerequisite Rule (effective Spring 2010):
+- Must successfully complete all core courses (C- or better) before taking any 3000-level or above biology courses
+
+UCC Requirements (40-41 credits):
+- Area 1: Personal Wellbeing (3 cr)
+- Area 2: Expression — Arts/Communication, Writing (ENG 1100), Literature (9 cr)
+- Area 3: Ways of Knowing — Philosophy, History, Social/Behavioral Science, Scientific Perspectives (Physics), Quantitative Thinking (Calculus I) (19-20 cr)
+- Area 4: Diversity & Justice (3 cr) — must complete 18 UCC credits first
+- Area 5: Civic & Community Engagement (3 cr) — must complete Area 4 first
+- Area 6: Global Awareness (3 cr) — must complete Area 4 first
+- First Year Seminar (1.5 cr) — required for 1st year students
+- Writing Intensive (WI): 4 courses required (first must be ENG 1100; at least one at 3000+ level)
+- Technology Intensive (TI): 2 courses required
+- Foreign Language: 6 credits (2 courses)
+- Students may use up to 3 major courses to fulfill UCC requirements
+
+Academic Integrity Policy:
+- All students must uphold academic honesty; violations are taken seriously
+
+Grade Complaints Procedure:
+- Formal procedure exists for investigating grade complaints
+
+Pass/Fail Policy:
+- Available; P grades not counted in GPA
+
+Repeat Course Policy:
+- Only last grade counts in GPA; must retake at WPUNJ
+
+Leave of Absence/Withdrawal:
+- Formal procedure available
+
+RESEARCH OPPORTUNITIES:
+- Undergraduate research with faculty in areas including: mouse neurophysiology, insect behavior, plant ecology, marine microorganism genomics
+- Annual Undergraduate Research Symposium (coordinated by Dr. Menon)
+- Independent Study (BIO 4990) available
+- GS-LSAMP program (coordinated by Dr. Desroches) for minority participation in STEM
+- MAPS (Minority Association of Premedical Students)
+
+PRE-PROFESSIONAL PROGRAMS:
+- Pre-Medicine / Pre-Dentistry
+- Pre-Physician Assistant (PA) Program
+- Pre-Physical Therapy (PT) Program
+- Post-Baccalaureate advising available (Dr. Waldburger)
+- Coordinator for Pre-Professional programs: Dr. Claire Leonard
+
+SPECIAL PROGRAMS:
+- NJ N-12 Teaching Certificate (education track available)
+- Honors Program at WPUNJ
+- Biopsychology Honors Track (coordinated by Dr. Benno)
+- NOYCE Program (coordinated by Dr. Gardner)
+
+TRANSFER STUDENTS:
+- Transfer student policies exist; Biology department accommodates transfer credits
+- Students with AA/AS degree must take 1 WI course and 0 TI courses
+
+ADVANCED PLACEMENT:
+- AP credit recognized; details available from the department
+
+SCIENCE ENRICHMENT CENTER:
+- Location: SciE | Phone: x3340
+- Provides academic support for science students
+
+HONOR SOCIETY:
+- Beta Beta Beta (ΒΒΒ) Biological Honor Society
+- Advisor: Dr. Robert Chesney
+
+SCHOLARSHIPS & AWARDS:
+- Multiple scholarships and awards available through the department (details in handbook pages 43-44)
+
+BIOLOGY ALUMNI NETWORK:
+- Active alumni network available to students
+
+CAREER OPPORTUNITIES:
+- Suggested Career Planning Timetable provided in handbook
+- Career paths: teaching, scientific research, medicine, allied health, biomedical/pharma industry, government
+- Job opportunities listed on pages 45+
+
+STUDENT COMMUNICATION:
+- Biology Listserv: sends updates on courses, seminars, jobs, scholarships to WPUNJ email
+- Website: http://www.wpunj.edu/cosh/departments/biology
+- Faculty pages: http://www.wpunj.edu/cosh/departments/biology/faculty.dot
+
+LABS & EQUIPMENT:
+- Animal Research Facility (Dr. Benno, Director)
+- Multiple research laboratories (SciW203, SciW205, SciW215, SciW305, SciW306, SciW307, SciW317, SciW319)
+- Equipment includes: Scanning Electron Microscope, Transmission Electron Microscope, greenhouse
+
+MINOR IN BIOLOGY:
+- Minor in Biology available; details from department
+
+GRADUATE PROGRAMS:
+- M.S. in Biology and Biotechnology offered
+- Graduate Coordinator: Dr. Pradeep Patnaik
+- Junior and senior biology majors with 3.0 GPA may take 5000-level graduate courses with instructor/chair/dean approval
+- Graduate credits can apply to either undergraduate or graduate degree at WPUNJ
+
+LABORATORY TECHNICIANS:
+- Mrs. Trish Bush: SciE 4013, x3450, busht@wpunj.edu
+- Mr. Norman Schanz: SciE 2008Q, x2270, schanz@wpunj.edu
+- Mrs. Susan Sgro: SciE 4015, x2453, sgros@wpunj.edu
+- Mr. Mike Wyrwa: SciE 4002, x2357, wyrwam@wpunj.edu
+
+ASSESSMENT & STUDENT LEARNING OUTCOMES:
+Students graduating with a biology degree will demonstrate:
+- Fundamental understanding of biological concepts
+- Oral and written communication of scientific ideas
+- Ability to formulate sound hypotheses
+- Ability to design experiments, collect/analyze data, and draw logical conclusions
+`;
+
+let conversationHistory = [];
+let isLoading = false;
+
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 120) + 'px';
 }
 
-function resetBall() {
-  ballX = W / 2;
-  ballY = H / 2;
-  const angle = (Math.random() * 0.6 - 0.3);
-  const dir = Math.random() < 0.5 ? 1 : -1;
-  ballVX = ballSpeed * dir * Math.cos(angle);
-  ballVY = ballSpeed * Math.sin(angle);
-}
-
-function loop() {
-  update();
-  draw();
-  animId = requestAnimationFrame(loop);
-}
-
-function update() {
-  // Player movement
-  if (keys['ArrowUp'])   playerY = Math.max(0, playerY - 6);
-  if (keys['ArrowDown']) playerY = Math.min(H - paddleH, playerY + 6);
-
-  // CPU AI
-  const cpuCenter = compY + paddleH / 2;
-  if (cpuCenter < ballY - 4) compY = Math.min(H - paddleH, compY + cpuSpeed);
-  if (cpuCenter > ballY + 4) compY = Math.max(0, compY - cpuSpeed);
-
-  // Ball movement
-  ballX += ballVX;
-  ballY += ballVY;
-
-  // Top/bottom bounce
-  if (ballY - ballR < 0) { ballY = ballR; ballVY *= -1; }
-  if (ballY + ballR > H) { ballY = H - ballR; ballVY *= -1; }
-
-  // Player paddle collision (left)
-  const px = MARGIN + PADDLE_W;
-  if (ballX - ballR < px && ballX - ballR > MARGIN && ballY > playerY && ballY < playerY + paddleH) {
-    ballX = px + ballR;
-    const rel = (ballY - (playerY + paddleH / 2)) / (paddleH / 2);
-    const bounceAngle = rel * 0.8;
-    const speed = Math.sqrt(ballVX*ballVX + ballVY*ballVY) * 1.05;
-    ballVX =  Math.abs(speed * Math.cos(bounceAngle));
-    ballVY = speed * Math.sin(bounceAngle);
-    if (ballVX > ballSpeed * 2.5) ballVX = ballSpeed * 2.5;
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) {
+    e.preventDefault();
+    sendMessage();
   }
+}
 
-  // CPU paddle collision (right)
-  const cx = W - MARGIN - PADDLE_W;
-  if (ballX + ballR > cx && ballX + ballR < W - MARGIN && ballY > compY && ballY < compY + paddleH) {
-    ballX = cx - ballR;
-    const rel = (ballY - (compY + paddleH / 2)) / (paddleH / 2);
-    const bounceAngle = rel * 0.8;
-    const speed = Math.sqrt(ballVX*ballVX + ballVY*ballVY) * 1.05;
-    ballVX = -Math.abs(speed * Math.cos(bounceAngle));
-    ballVY = speed * Math.sin(bounceAngle);
-    if (Math.abs(ballVX) > ballSpeed * 2.5) ballVX = -ballSpeed * 2.5;
-  }
+function ask(btn) {
+  const text = btn.textContent.replace(/^[^\s]+\s/, '').trim();
+  document.getElementById('userInput').value = text;
+  sendMessage();
+}
 
-  // Score
-  if (ballX - ballR < 0) {
-    compScore++;
-    compScoreEl.textContent = compScore;
-    if (compScore >= pointsToWin) { endGame(false); return; }
-    resetBall();
-  }
-  if (ballX + ballR > W) {
-    playerScore++;
-    playerScoreEl.textContent = playerScore;
-    if (playerScore >= pointsToWin) { endGame(true); return; }
-    resetBall();
+function appendMessage(role, content, isError = false) {
+  const messages = document.getElementById('messages');
+
+  const msgDiv = document.createElement('div');
+  msgDiv.className = `msg ${role}`;
+
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar';
+  avatar.textContent = role === 'user' ? 'YOU' : '🌿';
+
+  const bubble = document.createElement('div');
+  bubble.className = isError ? 'bubble error-bubble' : 'bubble';
+  bubble.innerHTML = content.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+  msgDiv.appendChild(avatar);
+  msgDiv.appendChild(bubble);
+  messages.appendChild(msgDiv);
+  scrollToBottom();
+  return bubble;
+}
+
+function showTyping() {
+  const messages = document.getElementById('messages');
+  const msgDiv = document.createElement('div');
+  msgDiv.className = 'msg bot';
+  msgDiv.id = 'typingIndicator';
+
+  const avatar = document.createElement('div');
+  avatar.className = 'avatar';
+  avatar.textContent = '🌿';
+
+  const bubble = document.createElement('div');
+  bubble.className = 'bubble';
+  bubble.innerHTML = `<div class="typing-indicator"><span></span><span></span><span></span></div>`;
+
+  msgDiv.appendChild(avatar);
+  msgDiv.appendChild(bubble);
+  messages.appendChild(msgDiv);
+  scrollToBottom();
+}
+
+function removeTyping() {
+  const el = document.getElementById('typingIndicator');
+  if (el) el.remove();
+}
+
+function scrollToBottom() {
+  const wrapper = document.getElementById('chatWrapper');
+  wrapper.scrollTo({ top: wrapper.scrollHeight, behavior: 'smooth' });
+}
+
+async function sendMessage() {
+  if (isLoading) return;
+  const input = document.getElementById('userInput');
+  const text = input.value.trim();
+  if (!text) return;
+
+  input.value = '';
+  input.style.height = 'auto';
+
+  appendMessage('user', text);
+  conversationHistory.push({ role: 'user', content: text });
+
+  isLoading = true;
+  document.getElementById('sendBtn').disabled = true;
+  showTyping();
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        system: HANDBOOK_CONTEXT,
+        messages: conversationHistory
+      })
+    });
+
+    const data = await response.json();
+    removeTyping();
+
+    if (data.error) throw new Error(data.error.message);
+
+    const reply = data.content?.[0]?.text || 'Sorry, I could not generate a response.';
+    conversationHistory.push({ role: 'assistant', content: reply });
+    appendMessage('bot', reply);
+
+  } catch (err) {
+    removeTyping();
+    appendMessage('bot', '⚠️ Something went wrong. Please try again.', true);
+    conversationHistory.pop();
+  } finally {
+    isLoading = false;
+    document.getElementById('sendBtn').disabled = false;
+    input.focus();
   }
 }
 
-function draw() {
-  // Green table
-  ctx.fillStyle = '#2d6a2d';
-  ctx.fillRect(0, 0, W, H);
-
-  // Table lines
-  ctx.strokeStyle = 'rgba(255,255,255,0.18)';
-  ctx.lineWidth = 2;
-  // Center line
-  ctx.setLineDash([10, 10]);
-  ctx.beginPath();
-  ctx.moveTo(W / 2, 0);
-  ctx.lineTo(W / 2, H);
-  ctx.stroke();
-  ctx.setLineDash([]);
-
-  // Border
-  ctx.strokeStyle = 'rgba(255,255,255,0.25)';
-  ctx.lineWidth = 3;
-  ctx.strokeRect(4, 4, W - 8, H - 8);
-
-  // Net
-  ctx.fillStyle = 'rgba(255,255,255,0.35)';
-  ctx.fillRect(W/2 - 2, 0, 4, H);
-
-  // Paddles (beige)
-  const grad1 = ctx.createLinearGradient(MARGIN, 0, MARGIN + PADDLE_W, 0);
-  grad1.addColorStop(0, '#d4b896');
-  grad1.addColorStop(1, '#c4a070');
-  ctx.fillStyle = grad1;
-  ctx.beginPath();
-  ctx.roundRect(MARGIN, playerY, PADDLE_W, paddleH, 4);
-  ctx.fill();
-
-  const grad2 = ctx.createLinearGradient(W - MARGIN - PADDLE_W, 0, W - MARGIN, 0);
-  grad2.addColorStop(0, '#c4a070');
-  grad2.addColorStop(1, '#d4b896');
-  ctx.fillStyle = grad2;
-  ctx.beginPath();
-  ctx.roundRect(W - MARGIN - PADDLE_W, compY, PADDLE_W, paddleH, 4);
-  ctx.fill();
-
-  // Ball (white with shadow)
-  ctx.shadowColor = 'rgba(0,0,0,0.5)';
-  ctx.shadowBlur = 10;
-  ctx.fillStyle = '#ffffff';
-  ctx.beginPath();
-  ctx.arc(ballX, ballY, ballR, 0, Math.PI * 2);
-  ctx.fill();
-  ctx.shadowBlur = 0;
-
-  // Subtle highlight on ball
-  const bgrad = ctx.createRadialGradient(ballX - ballR*0.3, ballY - ballR*0.3, ballR*0.1, ballX, ballY, ballR);
-  bgrad.addColorStop(0, 'rgba(255,255,255,0.9)');
-  bgrad.addColorStop(1, 'rgba(200,200,200,0.6)');
-  ctx.fillStyle = bgrad;
-  ctx.beginPath();
-  ctx.arc(ballX, ballY, ballR, 0, Math.PI * 2);
-  ctx.fill();
-}
-
-function endGame(playerWon) {
-  cancelAnimationFrame(animId);
-  gameOverMsg.textContent = playerWon ? 'YOU WIN! 🏆' : 'GAME OVER';
-  gameOverMsg.style.color = playerWon ? '#a0f0a0' : '#f0a0a0';
-  gameOverOverlay.style.display = 'flex';
-}
+document.getElementById('userInput').focus();
 </script>
 </body>
 </html>
